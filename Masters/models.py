@@ -64,3 +64,15 @@ class MASTER_vehicle_model(models.Model):
 
     def __str__(self):
         return f"{self.brand.name} {self.name}"
+    
+# Inventory Masters
+# ------------------------------------------------------------------
+class MASTER_spare_part_type(models.Model):
+    name = models.CharField(max_length=50, unique=True, help_text="e.g., Engine, Body, Electrical, Consumable")
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "MASTER - Spare Part Types"
+
+    def __str__(self):
+        return self.name

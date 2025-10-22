@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # custom apps
-    'Masters',
-    'Employee',
-    'Vehicle',
     'Customer',
+    'Employee',
+    'Inventory',
+    'Masters',
+    'Service',
+    'Vehicle',
 
     # custom extensions
     'phonenumber_field',
@@ -82,10 +84,18 @@ WSGI_APPLICATION = 'VSC_ERP.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'vsc_erp',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306',
+	},
 }
 
 
