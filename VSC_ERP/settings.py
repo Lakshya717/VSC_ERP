@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # custom apps
+    'Masters',
     'Employee',
+    'Vehicle',
+    'Customer',
 
     # custom extensions
     'phonenumber_field',
