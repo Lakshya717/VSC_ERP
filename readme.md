@@ -64,6 +64,7 @@ Generating invoices for services, releasing of funds for inventory, salary, offi
 
 - Employee (OneToOne)
 - Education
+- shift
 - pay-grade
 
 ### 1A3. Cashier
