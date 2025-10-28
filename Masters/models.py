@@ -8,9 +8,16 @@ class MASTER_role(models.Model):
     def __str__(self):
         return self.name
 
+    '''
+    Mechanic
+    Accountant
+    Cashier
+    Advisor
+    '''
+
 class MASTER_pay_grade_level(models.Model):
     role = models.ForeignKey(MASTER_role, on_delete=models.CASCADE)
-    level = models.CharField(max_length=10) # e.g., "L1", "L2", "Senior"
+    level = models.CharField(max_length=10)
     base_salary = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
 

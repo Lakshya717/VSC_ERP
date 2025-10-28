@@ -19,9 +19,6 @@ Handling of all the employees that will exist on the system varying from Admin, 
 ### Inventory
 Handling incoming shipments(parts) and keeping their track record and all their related sub actions.
 
-### Vehicle (Feasible Partially)
-Handling of all the vehicles whose services are being offered at the service centre
-
 ### Customer (Feasible)
 Handling customer data involving their previous services, personal record, vehicle record, loyalty points etc.
 
@@ -175,14 +172,14 @@ Generating invoices for services, releasing of funds for inventory, salary, offi
 
 
 ```bash
-(venv) PS C:\Users\Lakshya\Documents\Codes\django\VSC_ERP> python manage.py makemigrations
+PS C:\Users\Lakshya\Documents\Codes\django\VSC_ERP> python manage.py makemigrations
 Migrations for 'Masters':
   Masters\migrations\0001_initial.py
-    + Create model MASTER_expertise_area
     + Create model MASTER_role
     + Create model MASTER_spare_part_type
     + Create model MASTER_vehicle_brand
     + Create model MASTER_vehicle_category
+    + Create model MASTER_expertise_area
     + Create model MASTER_pay_grade_level
     + Create model MASTER_vehicle_model
 Migrations for 'Employee':
@@ -199,8 +196,6 @@ Migrations for 'Inventory':
 Migrations for 'Customer':
   Customer\migrations\0001_initial.py
     + Create model Customer
-Migrations for 'Vehicle':
-  Vehicle\migrations\0001_initial.py
     + Create model Vehicle
 Migrations for 'Service':
   Service\migrations\0001_initial.py
@@ -208,4 +203,32 @@ Migrations for 'Service':
     + Create model ServiceInvoice
     + Create model ServicePart
     + Add field parts to service
+PS C:\Users\Lakshya\Documents\Codes\django\VSC_ERP> python manage.py migrate
+Operations to perform:
+  Apply all migrations: Customer, Employee, Inventory, Masters, Service, admin, auth, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying Masters.0001_initial... OK
+  Applying Customer.0001_initial... OK
+  Applying Employee.0001_initial... OK
+  Applying Inventory.0001_initial... OK
+  Applying Service.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+PS C:\Users\Lakshya\Documents\Codes\django\VSC_ERP> 
 ```
