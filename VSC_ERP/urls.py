@@ -25,5 +25,5 @@ urlpatterns = [
     path('Employee/',include('Employee.urls')),
     path('Inventory/',include('Inventory.urls')),
     path('Service/',include('Service.urls')),
-    path('Vehicle/',include('Vehicle.urls')),
+    path('chaining/', include('smart_selects.urls')),
 ]

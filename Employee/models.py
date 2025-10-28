@@ -4,6 +4,18 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from Masters.models import *
 
+'''
+### 1. User
+
+- username
+- first_name
+- last_name
+- email
+- password
+- is_staff
+- is_active
+'''
+
 # Employee Models
 # ------------------------------------------------------------------
 class Employee(models.Model):

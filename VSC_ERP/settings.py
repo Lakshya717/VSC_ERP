@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'Inventory',
     'Masters',
     'Service',
-    'Vehicle',
 
     # custom extensions
     'phonenumber_field',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'smart_selects',
 ]
 
 MIDDLEWARE = [
@@ -84,18 +86,18 @@ WSGI_APPLICATION = 'VSC_ERP.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # },
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vsc_erp',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '3306',
-	},
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'vsc_erp',
+    #     'USER': 'root',
+    #     'PASSWORD': 'root',
+    #     'HOST': 'localhost',
+    #     'PORT': '3306',
+	# },
 }
 
 
@@ -143,3 +145,14 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Custom extensions
+# ---------------------------------------------------------------------------------
+
+# Crsipy forms
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Smart Selects
+USE_JQUERY_URL = True

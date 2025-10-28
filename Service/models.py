@@ -2,8 +2,7 @@ from django.db import models, transaction
 from django.db.models import Sum, F
 from django.core.exceptions import PermissionDenied, ValidationError
 
-from Customer.models import Customer
-from Vehicle.models import Vehicle
+from Customer.models import Customer,Vehicle
 from Employee.models import Mechanic, Cashier
 from Inventory.models import SparePart
 
@@ -123,33 +122,8 @@ class ServicePart(models.Model):
             print(f"Error in ServicePart delete: {e}")
             raise # Re-raise the exception to stop the delete
 
-
-'''
-### (was 6.) ServiceInvoice (Renamed from CustomerInvoice)
-
-- service (OneToOne)
-- cashier (ForeignKey)
-- date
-- amount (This will be auto-calculated)
-- payment_method
-- status
-'''
-
-class ServiceInvoice(models.Model):
-    PAYMENT_CHOICES = [
-        ('CASH', 'Cash'),
-        ('CARD', 'Card'),
-        ('ONLINE', 'Online'),
-        ('PENDING', 'Pending'),
-    ]
+class ServiceInvoice(models.Model):    
     
-    STATUS_CHOICES = [
-        ('PENDING', 'Pending'),
-        ('PAID', 'Paid'),
-        ('CANCELLED', 'Cancelled'),
-    ]
-
-    # --- Core Fields ---
     service = models.OneToOneField(
         Service, 
         on_delete=models.PROTECT, 
@@ -169,8 +143,26 @@ class ServiceInvoice(models.Model):
         help_text="Final amount for this service, calculated on creation."
     )
     
-    payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='PENDING')
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    payment_method = models.CharField(
+        max_length=10, 
+        choices=[
+            ('CASH', 'Cash'),
+            ('CARD', 'Card'),
+            ('ONLINE', 'Online'),
+            ('PENDING', 'Pending'),
+        ], 
+        default='PENDING'
+    )
+
+    status = models.CharField(
+        max_length=10, 
+        choices=[
+            ('PENDING', 'Pending'),
+            ('PAID', 'Paid'),
+            ('CANCELLED', 'Cancelled'),
+        ], 
+        default='PENDING'
+    )
 
     # --- Model Settings ---
     class Meta:

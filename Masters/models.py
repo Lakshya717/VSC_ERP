@@ -18,9 +18,10 @@ class MASTER_pay_grade_level(models.Model):
         unique_together = ('role', 'level')
 
     def __str__(self):
-        return f"{self.role.name} - {self.level} (${self.base_salary})"
+        return f"{self.role.name} - {self.level} (₹{self.base_salary})"
 
 class MASTER_expertise_area(models.Model):
+    role = models.ForeignKey(MASTER_role, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
 
