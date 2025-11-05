@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="Vehicle Service Centre Management System">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome-all.min.css' %}">
+    <!-- Cache-bust overrides during development to ensure latest styles load -->
+    <link rel="stylesheet" href="{% static 'assets/css/bss-overrides.css' %}">
+
+    {% block explicit_CSS %}{% endblock %}
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        {% include 'partials/components/navbar.html' %}
+
+
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+        
+                {% include 'partials/components/content_navbar.html' %}
+
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}
+                </div>
+                
+            </div>
+
+            {% include 'partials/components/footer.html' %}
+
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="{% static 'assets/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/bs-init.js' %}"></script>
+    <script src="{% static 'assets/js/theme.js' %}"></script>
+
+    {% block explicit_scripts %}{% endblock %}
+</body>
+
+</html>

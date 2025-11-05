@@ -1,0 +1,13 @@
+from django.urls import path
+from . import views
+
+app_name = "Customer"
+urlpatterns = [
+    path('CustomerCreationWizard/', views.CustomerCreationWizard.as_view(), name='CustomerCreationWizard'),
+    path('EmployeeCreationWizard/', views.EmployeeCreationWizard.as_view(), name='EmployeeCreationWizard'),
+    
+    path('spare_part_create', views.spare_part_create, name='spare_part_create'),
+    path('inventory_invoice_create', views.inventory_invoice_create, name='inventory_invoice_create'),
+
+    path("",views.index,name="index"),
+]

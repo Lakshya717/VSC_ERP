@@ -22,8 +22,5 @@ urlpatterns = [
     path('Masters/',include('Masters.urls')),
     path('chaining/', include('smart_selects.urls')),
 
-    path('Customer/',include('Customer.urls')),
-    path('Employee/',include('Employee.urls')),
-    path('Inventory/',include('Inventory.urls')),
-    path('Service/',include('Service.urls')),
+    path('',include('CORE.urls')),
 ]
