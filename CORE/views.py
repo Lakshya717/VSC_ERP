@@ -135,3 +135,21 @@ def inventory_invoice_create(request):
 
 def index(request):
     return render(request,'index.html')
+
+def inventory(request):
+    return render(request,'inventory.html')
+
+def customers(request):
+    return render(request,'customers.html')
+
+def employee(request):
+    return render(request,'employee.html')
+
+def profile(request):
+    return render(request,'profile.html')
+
+def services(request):
+    return render(request,'services.html')
+
+
+

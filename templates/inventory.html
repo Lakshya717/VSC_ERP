@@ -1,0 +1,92 @@
+{% extends 'partials/blank.html' %}
+{% load static %}
+
+{% block title %}
+    Inventory - VSC ERP
+{% endblock %}
+
+{% block content %}
+<h3 class="text-dark mb-4">Inventory</h3>
+
+<div class="card shadow">
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+        <p class="text-primary m-0 fw-bold">Spare Parts</p>
+        
+        <button class="btn btn-primary" type="button" 
+            data-bs-toggle="modal" 
+            data-bs-target="#formModal" 
+            data-iframe-src="{% url 'CORE:spare_part_create' %}">
+            + New Part
+        </button>
+
+    </div>
+    <div class="card-body">
+        <div class="table-responsive mt-2 table" id="dataTable" role="grid" aria-describedby="dataTable_info">
+            <table class="table my-0" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Spare part</th>
+                        <th>Vehicle Model</th>
+                        <th>Type</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0023</td>
+                        <td>7L Engine</td>
+                        <td>Honda Civic</td>
+                        <td>Engine</td>
+                        <td>33</td>
+                        <td>$162,700</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        </div>
+</div>
+
+<div class="card shadow mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+        <p class="text-primary m-0 fw-bold">Invoices</p>
+        
+        <button class="btn btn-primary" type="button" 
+            data-bs-toggle="modal" 
+            data-bs-target="#formModal" 
+            data-iframe-src="{% url 'CORE:inventory_invoice_create' %}">
+            + New Invoice
+        </button>
+        
+    </div>
+    <div class="card-body">
+        <div class="table-responsive mt-2 table" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+            <table class="table my-0" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Spare part</th>
+                        <th>Supplier</th>
+                        <th>Qty</th>
+                        <th>date</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cell 1</td>
+                        <td>0023 - 7L Engine</td>
+                        <td>ABP Parts</td>
+                        <td>33</td>
+                        <td>2008/11/28</td>
+                        <td>$162,700</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,17 +1,17 @@
 {% load static %}
 <nav class="navbar align-items-start p-0 sidebar sidebar-dark accordion bg-gradient-primary navbar-dark" style="background: rgb(43,50,72);">
-    <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center m-0 sidebar-brand" href="#">
+    <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center m-0 sidebar-brand" href="{% url 'CORE:index' %}">
             <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-shuttle-van"></i></div>
             <div class="mx-3 sidebar-brand-text"><span>VSC ERP</span></div>
         </a>
         <hr class="my-0 sidebar-divider">
         <ul class="navbar-nav text-light" id="accordionSidebar">
             <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'CORE:index' %}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'a' %}active{% endif %}" href="/profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'b' %}active{% endif %}" href="/inventory.html"><i class="fas fa-table"></i><span>Inventory</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'c' %}active{% endif %}" href="/services.html"><i class="fas fa-table"></i><span>Services</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'd' %}active{% endif %}" href="/customers.html"><i class="fas fa-table"></i><span>Customers</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'e' %}active{% endif %}" href="/employee.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-person-fill">
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'CORE:profile' %}"><i class="fas fa-user"></i><span>Profile</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'inventory' %}active{% endif %}" href="{% url 'CORE:inventory' %}"><i class="fas fa-table"></i><span>Inventory</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}" href="{% url 'CORE:services' %}"><i class="fas fa-table"></i><span>Services</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'customers' %}active{% endif %}" href="{% url 'CORE:customers' %}"><i class="fas fa-table"></i><span>Customers</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'employee' %}active{% endif %}" href="{% url 'CORE:employee' %}"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-person-fill">
                         <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"></path>
                     </svg><span>Employee</span></a></li>
             <li class="nav-item"></li>
