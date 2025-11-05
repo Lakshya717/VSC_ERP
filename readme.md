@@ -167,9 +167,6 @@ Generating invoices for services, releasing of funds for inventory, salary, offi
 - name
 - desc
 
-## Triggers
-
-
 
 ```bash
 PS C:\Users\Lakshya\Documents\Codes\django\VSC_ERP> python manage.py makemigrations
@@ -182,30 +179,26 @@ Migrations for 'Masters':
     + Create model MASTER_expertise_area
     + Create model MASTER_pay_grade_level
     + Create model MASTER_vehicle_model
-Migrations for 'Employee':
-  Employee\migrations\0001_initial.py
+Migrations for 'CORE':
+  CORE\migrations\0001_initial.py
     + Create model Employee
+    + Create model Customer
     + Create model Accountant
     + Create model Advisor
     + Create model Cashier
     + Create model Mechanic
-Migrations for 'Inventory':
-  Inventory\migrations\0001_initial.py
-    + Create model SparePart
-    + Create model InventoryInvoice
-Migrations for 'Customer':
-  Customer\migrations\0001_initial.py
-    + Create model Customer
-    + Create model Vehicle
-Migrations for 'Service':
-  Service\migrations\0001_initial.py
     + Create model Service
-    + Create model ServiceInvoice
+    + Create model SparePart
     + Create model ServicePart
     + Add field parts to service
+    + Create model InventoryInvoice
+    + Create model Vehicle
+    + Add field vehicle to service
+    + Create model ServiceInvoice
+    + Add field mechanic to service
 PS C:\Users\Lakshya\Documents\Codes\django\VSC_ERP> python manage.py migrate
 Operations to perform:
-  Apply all migrations: Customer, Employee, Inventory, Masters, Service, admin, auth, contenttypes, sessions
+  Apply all migrations: CORE, Masters, admin, auth, contenttypes, sessions
 Running migrations:
   Applying contenttypes.0001_initial... OK
   Applying contenttypes.0002_remove_content_type_name... OK
@@ -222,13 +215,9 @@ Running migrations:
   Applying auth.0011_update_proxy_permissions... OK
   Applying auth.0012_alter_user_first_name_max_length... OK
   Applying Masters.0001_initial... OK
-  Applying Customer.0001_initial... OK
-  Applying Employee.0001_initial... OK
-  Applying Inventory.0001_initial... OK
-  Applying Service.0001_initial... OK
+  Applying CORE.0001_initial... OK
   Applying admin.0001_initial... OK
   Applying admin.0002_logentry_remove_auto_add... OK
   Applying admin.0003_logentry_add_action_flag_choices... OK
   Applying sessions.0001_initial... OK
-PS C:\Users\Lakshya\Documents\Codes\django\VSC_ERP> 
 ```
