@@ -2,6 +2,12 @@ from django import forms
 from django.contrib.auth.models import User
 
 from .models import *
+from Masters.models import *
+
+# --- THIS IS THE FIX ---
+# It's 'db_fields', not 'form_fields'
+from smart_selects.db_fields import ChainedForeignKey
+# --- END OF FIX ---
 
 # Customer forms
 # ------------------------------------------------------------------
@@ -21,13 +27,6 @@ class CustomerForm(forms.ModelForm):
 
 # Employee forms
 # ------------------------------------------------------------------
-class UserCreateForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password']
-
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
@@ -74,3 +73,50 @@ class InventoryInvoiceForm(forms.ModelForm):
 
 # Service forms
 # ------------------------------------------------------------------
+
+class ServiceRecordForm(forms.ModelForm):
+    """
+    Form for creating a new Service record.
+    Uses a chained dropdown for the vehicle.
+    """
+    
+    vehicle = ChainedForeignKey(
+        Vehicle,
+        chained_field="customer",
+        chained_model_field="customer",
+        show_all=False,
+        auto_choose=True,
+        sort=True
+    )
+
+    class Meta:
+        model = Service
+        fields = [
+            'customer', 
+            'vehicle', 
+            'mechanic', 
+            'status', 
+            'description_of_service', 
+            'labor_cost'
+        ]
+
+class ServiceInvoiceForm(forms.ModelForm):
+    """
+    Form for creating a new ServiceInvoice.
+    """
+    
+    service = forms.ModelChoiceField(
+        queryset=Service.objects.filter(
+            status__in=['COMPLETED', 'BILLED'], 
+            invoice__isnull=True
+        ).order_by('-service_date')
+    )
+        
+    class Meta:
+        model = ServiceInvoice
+        fields = [
+            'service', 
+            'cashier', 
+            'payment_method',
+            'status'
+        ]

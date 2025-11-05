@@ -2,9 +2,11 @@ from formtools.wizard.views import SessionWizardView
 from django.shortcuts import render
 from django.forms import Form
 
+# This will now import all forms, including the new service forms
 from .forms import *
 
 # --- IMPORT SECTION ---
+# Import all main models from the local 'CORE' app (.models)
 from .models import (
     Customer, 
     Employee, 
@@ -19,6 +21,7 @@ from .models import (
     ServicePart,
     ServiceInvoice
 )
+# Import lookup tables from the 'Masters' app
 from Masters.models import (
     MASTER_role,
     MASTER_pay_grade_level,
@@ -195,46 +198,36 @@ def services(request):
 
 @xframe_options_sameorigin
 def service_record_create(request):
-    # This is a placeholder. You need to create 'ServiceRecordForm'
-    # and the corresponding template.
+    """
+    Handles the creation of a new Service record.
+    """
     if request.method == 'POST':
-        # form = ServiceRecordForm(request.POST)
-        # if form.is_valid():
-        #     form.save()
-        #     return render(request, 'services/service_record_done.html')
-        pass
+        form = ServiceRecordForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'services/service_record_done.html')
     else:
-        # form = ServiceRecordForm()
-        pass
+        form = ServiceRecordForm()
     
-    # We are returning a placeholder for now
-    # You should create 'services/service_form_base.html'
-    # and 'ServiceRecordForm' in forms.py
-    
-    # FOR NOW, let's use a generic template to stop the crash:
-    form = SparePartForm() # Using a spare part form as a temporary placeholder
-    return render(request, 'inventory/inventory_form_base.html', {
+    return render(request, 'services/service_form_base.html', {
         'form': form,
-        'title': 'Create New Service Record (Placeholder)'
+        'title': 'Create New Service Record'
     })
 
 @xframe_options_sameorigin
 def service_invoice_create(request):
-    # This is a placeholder. You need to create 'ServiceInvoiceForm'
-    # and the corresponding template.
+    """
+    Handles the creation of a new Service Invoice.
+    """
     if request.method == 'POST':
-        # form = ServiceInvoiceForm(request.POST)
-        # if form.is_valid():
-        #     form.save()
-        #     return render(request, 'services/service_invoice_done.html')
-        pass
+        form = ServiceInvoiceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'services/service_invoice_done.html')
     else:
-        # form = ServiceInvoiceForm()
-        pass
-
-    # FOR NOW, let's use a generic template to stop the crash:
-    form = InventoryInvoiceForm() # Using an invoice form as a temporary placeholder
-    return render(request, 'inventory/inventory_form_base.html', {
+        form = ServiceInvoiceForm()
+    
+    return render(request, 'services/service_form_base.html', {
         'form': form,
-        'title': 'Create New Service Invoice (Placeholder)'
+        'title': 'Create New Service Invoice'
     })
