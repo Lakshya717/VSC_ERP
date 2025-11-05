@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head><title>Done</title></head>
+<head><title>Success</title></head>
 <body>
+    <p>Successfully added part: {{ part_name }}</p>
+
     <script>
-        // Send a message to the parent window
-        window.parent.postMessage('inventoryPartCreated', '*');
+        window.parent.postMessage("form-success", "*");
     </script>
 </body>
 </html>

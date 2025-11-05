@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head><title>Done</title></head>
+<head><title>Success</title></head>
 <body>
+    <p>Successfully created invoice: {{ invoice.id }}</p>
+
     <script>
-        // Send a *different* message to the parent window
-        window.parent.postMessage('inventoryInvoiceCreated', '*');
+        window.parent.postMessage("form-success", "*");
     </script>
 </body>
 </html>

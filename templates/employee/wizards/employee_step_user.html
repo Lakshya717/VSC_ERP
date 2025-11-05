@@ -1,10 +1,12 @@
 {% load static %}
+{% load crispy_forms_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step 1: User</title>
+    <title>Step 1: User Details</title>
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
 </head>
 <body style="background-color: transparent;">
@@ -15,13 +17,10 @@
             
             <fieldset>
                 <legend>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}: User Details</legend>
-                
-                {{ wizard.form.as_p }}
-
+                {{ wizard.form|crispy }}
             </fieldset>
             
             <hr>
-            
             <button type="submit" class="btn btn-primary">Next</button>
         </form>
     </div>

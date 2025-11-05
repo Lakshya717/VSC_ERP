@@ -14,5 +14,9 @@ urlpatterns = [
     path("customers/",views.customers,name="customers"),        
     path("employee/",views.employee,name="employee"),        
     path("profile/",views.profile,name="profile"),        
-    path("services/",views.services,name="services"),        
-]
+    path("services/",views.services,name="services"),    
+   
+
+    path('service_record_create/', views.service_record_create, name='service_record_create'),
+    path('service_invoice_create/', views.service_invoice_create, name='service_invoice_create'),
+]    
