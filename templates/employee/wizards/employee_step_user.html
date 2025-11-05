@@ -1,4 +1,29 @@
-{% extends "employee/wizards/employee_step_base.html" %}
-{% block form_content %}
-    {{ wizard.form.as_p }}
-{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 1: User</title>
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+</head>
+<body style="background-color: transparent;">
+    <div class="p-4">
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ wizard.management_form }}
+            
+            <fieldset>
+                <legend>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}: User Details</legend>
+                
+                {{ wizard.form.as_p }}
+
+            </fieldset>
+            
+            <hr>
+            
+            <button type="submit" class="btn btn-primary">Next</button>
+        </form>
+    </div>
+</body>
+</html>

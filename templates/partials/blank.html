@@ -5,11 +5,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>{% block title %}{% endblock %}</title>
+    
+    <title>{% block title %}Dashboard - VSC ERP{% endblock %}</title>
+    
     <meta name="description" content="Vehicle Service Centre Management System">
+    
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome-all.min.css' %}">
-    <!-- Cache-bust overrides during development to ensure latest styles load -->
     <link rel="stylesheet" href="{% static 'assets/css/bss-overrides.css' %}">
 
     {% block explicit_CSS %}{% endblock %}
@@ -17,8 +19,8 @@
 
 <body id="page-top">
     <div id="wrapper">
+        
         {% include 'partials/components/navbar.html' %}
-
 
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
@@ -35,11 +37,57 @@
 
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="{% static 'assets/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'assets/js/bs-init.js' %}"></script>
     <script src="{% static 'assets/js/theme.js' %}"></script>
 
     {% block explicit_scripts %}{% endblock %}
-</body>
 
+
+    <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Loading Form...</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe id="modalIframe" 
+                            src="about:blank" 
+                            style="width: 100%; height: 65vh; border: none;">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formModalElement = document.getElementById('formModal');
+        const formModal = new bootstrap.Modal(formModalElement);
+        const modalIframe = document.getElementById('modalIframe');
+
+        // HOOK 1: When the modal is told to open...
+        formModalElement.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; 
+            const iframeSrc = button.getAttribute('data-iframe-src'); 
+            modalIframe.setAttribute('src', iframeSrc);
+        });
+
+        // HOOK 2: When the modal is fully closed...
+        formModalElement.addEventListener('hidden.bs.modal', function (event) {
+            modalIframe.setAttribute('src', 'about:blank');
+        });
+
+        // HOOK 3: When the iframe sends a message...
+        window.addEventListener("message", (event) => {
+            if (event.data === "form-success") {
+                formModal.hide();
+                location.reload(); 
+            }
+        }, false);
+    </script>
+    
+</body>
 </html>

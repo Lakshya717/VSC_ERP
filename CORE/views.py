@@ -5,6 +5,11 @@ from django.forms import Form
 from .forms import *
 from .models import *
 
+from django.views.decorators.clickjacking import xframe_options_sameorigin
+from django.utils.decorators import method_decorator
+
+
+@method_decorator(xframe_options_sameorigin, name='dispatch')
 class CustomerCreationWizard(SessionWizardView):
     form_list = [
         ("user", UserCreateForm),
@@ -35,6 +40,8 @@ class CustomerCreationWizard(SessionWizardView):
             'username': user.get_full_name()
         })
 
+
+@method_decorator(xframe_options_sameorigin, name='dispatch')
 class EmployeeCreationWizard(SessionWizardView):
     form_list = [
         ("user", UserCreateForm),
@@ -99,7 +106,7 @@ class EmployeeCreationWizard(SessionWizardView):
             'username': user.username
         })
 
-
+@xframe_options_sameorigin
 def spare_part_create(request):
     if request.method == 'POST':
         form = SparePartForm(request.POST)
@@ -117,6 +124,8 @@ def spare_part_create(request):
         'title': 'Add New Part to Catalog'
     })
 
+
+@xframe_options_sameorigin
 def inventory_invoice_create(request):
     if request.method == 'POST':
         form = InventoryInvoiceForm(request.POST)
