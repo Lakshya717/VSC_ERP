@@ -2,35 +2,12 @@ from formtools.wizard.views import SessionWizardView
 from django.shortcuts import render
 from django.forms import Form
 
-# This will now import all forms, including the new service forms
+# Add VehicleForm to this import list
 from .forms import *
 
 # --- IMPORT SECTION ---
-# Import all main models from the local 'CORE' app (.models)
-from .models import (
-    Customer, 
-    Employee, 
-    Mechanic, 
-    Accountant, 
-    Cashier, 
-    Advisor, 
-    SparePart, 
-    InventoryInvoice, 
-    Vehicle, 
-    Service,
-    ServicePart,
-    ServiceInvoice
-)
-# Import lookup tables from the 'Masters' app
-from Masters.models import (
-    MASTER_role,
-    MASTER_pay_grade_level,
-    MASTER_expertise_area,
-    MASTER_vehicle_category,
-    MASTER_vehicle_brand,
-    MASTER_vehicle_model,
-    MASTER_spare_part_type
-)
+from .models import *
+from Masters.models import *
 # --- END OF IMPORT SECTION ---
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
@@ -39,19 +16,17 @@ from django.utils.decorators import method_decorator
 
 @method_decorator(xframe_options_sameorigin, name='dispatch')
 class CustomerCreationWizard(SessionWizardView):
+    # ... (rest of class) ...
     form_list = [
         ("user", UserCreateForm),
         ("customer", CustomerForm),
-    ]
-    
+    ]    
     TEMPLATES = {
         "user": "customer/wizards/customer_step_user.html",
         "customer": "customer/wizards/customer_step_details.html",
     }
-
     def get_template_names(self):
         return [self.TEMPLATES[self.steps.current]]
-
     def done(self, form_list, **kwargs):
         user_form = form_list[0]
         customer_form = form_list[1]
@@ -68,6 +43,7 @@ class CustomerCreationWizard(SessionWizardView):
 
 @method_decorator(xframe_options_sameorigin, name='dispatch')
 class EmployeeCreationWizard(SessionWizardView):
+    # ... (rest of class) ...
     form_list = [
         ("user", UserCreateForm),
         ("employee", EmployeeForm),
@@ -118,6 +94,7 @@ class EmployeeCreationWizard(SessionWizardView):
 
 @xframe_options_sameorigin
 def spare_part_create(request):
+    # ... (rest of view) ...
     if request.method == 'POST':
         form = SparePartForm(request.POST)
         if form.is_valid():
@@ -136,6 +113,7 @@ def spare_part_create(request):
 
 @xframe_options_sameorigin
 def inventory_invoice_create(request):
+    # ... (rest of view) ...
     if request.method == 'POST':
         form = InventoryInvoiceForm(request.POST)
         if form.is_valid():
@@ -152,11 +130,12 @@ def inventory_invoice_create(request):
     })
 
 # --- PAGE VIEWS ---
-
 def index(request):
+    # ... (rest of view) ...
     return render(request,'index.html')
 
 def inventory(request):
+    # ... (rest of view) ...
     all_spare_parts = SparePart.objects.all()
     all_invoices = InventoryInvoice.objects.all()
     context = {
@@ -166,6 +145,7 @@ def inventory(request):
     return render(request,'inventory.html', context)
 
 def customers(request):
+    # ... (rest of view) ...
     all_customers = Customer.objects.all()
     all_vehicles = Vehicle.objects.all() 
     context = {
@@ -175,6 +155,7 @@ def customers(request):
     return render(request,'customers.html', context)
 
 def employee(request):
+    # ... (rest of view) ...
     all_employees = Employee.objects.all()
     context = {
         'employees': all_employees,
@@ -182,9 +163,11 @@ def employee(request):
     return render(request,'employee.html', context)
 
 def profile(request):
+    # ... (rest of view) ...
     return render(request,'profile.html')
 
 def services(request):
+    # ... (rest of view) ...
     all_records = Service.objects.all() 
     all_invoices = ServiceInvoice.objects.all()
     context = {
@@ -194,13 +177,31 @@ def services(request):
     return render(request,'services.html', context)
 
 
-# --- FORM VIEWS FOR SERVICES PAGE (FIXED) ---
+# --- ADD THIS NEW VIEW ---
+@xframe_options_sameorigin
+def vehicle_create(request):
+    """
+    Handles the creation of a new Vehicle.
+    """
+    if request.method == 'POST':
+        form = VehicleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'customers/vehicle_form_done.html')
+    else:
+        form = VehicleForm()
+    
+    # We can reuse the generic form template
+    return render(request, 'services/service_form_base.html', {
+        'form': form,
+        'title': 'Add New Vehicle'
+    })
 
+
+# --- FORM VIEWS FOR SERVICES PAGE ---
 @xframe_options_sameorigin
 def service_record_create(request):
-    """
-    Handles the creation of a new Service record.
-    """
+    # ... (rest of view) ...
     if request.method == 'POST':
         form = ServiceRecordForm(request.POST)
         if form.is_valid():
@@ -216,9 +217,7 @@ def service_record_create(request):
 
 @xframe_options_sameorigin
 def service_invoice_create(request):
-    """
-    Handles the creation of a new Service Invoice.
-    """
+    # ... (rest of view) ...
     if request.method == 'POST':
         form = ServiceInvoiceForm(request.POST)
         if form.is_valid():

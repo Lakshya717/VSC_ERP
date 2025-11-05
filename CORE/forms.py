@@ -4,10 +4,7 @@ from django.contrib.auth.models import User
 from .models import *
 from Masters.models import *
 
-# --- THIS IS THE FIX ---
-# It's 'db_fields', not 'form_fields'
 from smart_selects.db_fields import ChainedForeignKey
-# --- END OF FIX ---
 
 # Customer forms
 # ------------------------------------------------------------------
@@ -24,6 +21,12 @@ class CustomerForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['user',]
 
+# --- ADD THIS NEW FORM ---
+class VehicleForm(forms.ModelForm):
+    class Meta:
+        model = Vehicle
+        # We get all fields from the model
+        fields = '__all__'
 
 # Employee forms
 # ------------------------------------------------------------------
@@ -75,11 +78,6 @@ class InventoryInvoiceForm(forms.ModelForm):
 # ------------------------------------------------------------------
 
 class ServiceRecordForm(forms.ModelForm):
-    """
-    Form for creating a new Service record.
-    Uses a chained dropdown for the vehicle.
-    """
-    
     vehicle = ChainedForeignKey(
         Vehicle,
         chained_field="customer",
@@ -101,10 +99,6 @@ class ServiceRecordForm(forms.ModelForm):
         ]
 
 class ServiceInvoiceForm(forms.ModelForm):
-    """
-    Form for creating a new ServiceInvoice.
-    """
-    
     service = forms.ModelChoiceField(
         queryset=Service.objects.filter(
             status__in=['COMPLETED', 'BILLED'], 
