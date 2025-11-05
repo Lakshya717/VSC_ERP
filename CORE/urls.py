@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = "Customer"
+app_name = "CORE"
 urlpatterns = [
     path('CustomerCreationWizard/', views.CustomerCreationWizard.as_view(), name='CustomerCreationWizard'),
     path('EmployeeCreationWizard/', views.EmployeeCreationWizard.as_view(), name='EmployeeCreationWizard'),

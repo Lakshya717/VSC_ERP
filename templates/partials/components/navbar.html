@@ -6,12 +6,12 @@
         </a>
         <hr class="my-0 sidebar-divider">
         <ul class="navbar-nav text-light" id="accordionSidebar">
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'Service' and request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'Service:index' %}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'a' and request.resolver_match.url_name == 'a' %}active{% endif %}" href="/profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'b' and request.resolver_match.url_name == 'b' %}active{% endif %}" href="/inventory.html"><i class="fas fa-table"></i><span>Inventory</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'c' and request.resolver_match.url_name == 'c' %}active{% endif %}" href="/services.html"><i class="fas fa-table"></i><span>Services</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'd' and request.resolver_match.url_name == 'd' %}active{% endif %}" href="/customers.html"><i class="fas fa-table"></i><span>Customers</span></a></li>
-            <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'e' and request.resolver_match.url_name == 'e' %}active{% endif %}" href="/employee.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-person-fill">
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'CORE:index' %}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'a' %}active{% endif %}" href="/profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'b' %}active{% endif %}" href="/inventory.html"><i class="fas fa-table"></i><span>Inventory</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'c' %}active{% endif %}" href="/services.html"><i class="fas fa-table"></i><span>Services</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'd' %}active{% endif %}" href="/customers.html"><i class="fas fa-table"></i><span>Customers</span></a></li>
+            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'e' %}active{% endif %}" href="/employee.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-person-fill">
                         <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"></path>
                     </svg><span>Employee</span></a></li>
             <li class="nav-item"></li>
