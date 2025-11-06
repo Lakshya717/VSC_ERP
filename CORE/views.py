@@ -1,19 +1,18 @@
 from formtools.wizard.views import SessionWizardView
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.urls import reverse
 from django.forms import Form
-
-# Add VehicleForm to this import list
-from .forms import *
-
-# --- IMPORT SECTION ---
-from .models import *
-from Masters.models import *
-# --- END OF IMPORT SECTION ---
-
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.utils.decorators import method_decorator
+from django.contrib.auth.views import LoginView, logout_then_login
+from django.contrib.auth.decorators import login_required
 
+from .forms import *
 
+from .models import *
+from Masters.models import *
+
+# ----------------- IFRAME VIEWS --------------------
 @method_decorator(xframe_options_sameorigin, name='dispatch')
 class CustomerCreationWizard(SessionWizardView):
     # ... (rest of class) ...
@@ -39,7 +38,6 @@ class CustomerCreationWizard(SessionWizardView):
         return render(self.request, 'customer/wizards/customer_wizard_done.html', {
             'username': user.get_full_name()
         })
-
 
 @method_decorator(xframe_options_sameorigin, name='dispatch')
 class EmployeeCreationWizard(SessionWizardView):
@@ -110,7 +108,6 @@ def spare_part_create(request):
         'title': 'Add New Part to Catalog'
     })
 
-
 @xframe_options_sameorigin
 def inventory_invoice_create(request):
     # ... (rest of view) ...
@@ -129,55 +126,6 @@ def inventory_invoice_create(request):
         'title': 'Receive Inventory Stock'
     })
 
-# --- PAGE VIEWS ---
-def index(request):
-    # ... (rest of view) ...
-    return render(request,'index.html')
-
-def inventory(request):
-    # ... (rest of view) ...
-    all_spare_parts = SparePart.objects.all()
-    all_invoices = InventoryInvoice.objects.all()
-    context = {
-        'spare_parts': all_spare_parts,
-        'inventory_invoices': all_invoices,
-    }
-    return render(request,'inventory.html', context)
-
-def customers(request):
-    # ... (rest of view) ...
-    all_customers = Customer.objects.all()
-    all_vehicles = Vehicle.objects.all() 
-    context = {
-        'customers': all_customers,
-        'vehicles': all_vehicles,
-    }
-    return render(request,'customers.html', context)
-
-def employee(request):
-    # ... (rest of view) ...
-    all_employees = Employee.objects.all()
-    context = {
-        'employees': all_employees,
-    }
-    return render(request,'employee.html', context)
-
-def profile(request):
-    # ... (rest of view) ...
-    return render(request,'profile.html')
-
-def services(request):
-    # ... (rest of view) ...
-    all_records = Service.objects.all() 
-    all_invoices = ServiceInvoice.objects.all()
-    context = {
-        'service_records': all_records,
-        'service_invoices': all_invoices,
-    }
-    return render(request,'services.html', context)
-
-
-# --- ADD THIS NEW VIEW ---
 @xframe_options_sameorigin
 def vehicle_create(request):
     """
@@ -230,3 +178,62 @@ def service_invoice_create(request):
         'form': form,
         'title': 'Create New Service Invoice'
     })
+
+# ----------------- PAGE VIEWS --------------------
+class login(LoginView):
+    template_name = "login.html"
+    redirect_authenticated_user = True
+
+def logout(request):
+    return logout_then_login(request,login_url= reverse('CORE:login'))
+
+@login_required()
+def index(request):
+    return render(request,'index.html')
+
+@login_required()
+def inventory(request):
+    # ... (rest of view) ...
+    all_spare_parts = SparePart.objects.all()
+    all_invoices = InventoryInvoice.objects.all()
+    context = {
+        'spare_parts': all_spare_parts,
+        'inventory_invoices': all_invoices,
+    }
+    return render(request,'inventory.html', context)
+
+@login_required()
+def customers(request):
+    # ... (rest of view) ...
+    all_customers = Customer.objects.all()
+    all_vehicles = Vehicle.objects.all() 
+    context = {
+        'customers': all_customers,
+        'vehicles': all_vehicles,
+    }
+    return render(request,'customers.html', context)
+
+@login_required()
+def employee(request):
+    # ... (rest of view) ...
+    all_employees = Employee.objects.all()
+    context = {
+        'employees': all_employees,
+    }
+    return render(request,'employee.html', context)
+
+@login_required()
+def profile(request):
+    # ... (rest of view) ...
+    return render(request,'profile.html')
+
+@login_required()
+def services(request):
+    # ... (rest of view) ...
+    all_records = Service.objects.all() 
+    all_invoices = ServiceInvoice.objects.all()
+    context = {
+        'service_records': all_records,
+        'service_invoices': all_invoices,
+    }
+    return render(request,'services.html', context)

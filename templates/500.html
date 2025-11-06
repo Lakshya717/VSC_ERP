@@ -1,0 +1,16 @@
+{% extends 'partials/blank.html' %}
+{% load static %}
+
+{% block title %}
+    Page Not Found - VSC ERP
+{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <div class="mx-auto error" data-text="500">
+        <p class="m-0">500</p>
+    </div>
+    <p class="text-dark mb-5 lead">Internal Server Error</p>
+    <p class="text-black-50 mb-0">Sorry, this is on us, we'll fix it ASAP...</p><a href="/">← Back to Dashboard</a>
+</div>
+{% endblock %}
