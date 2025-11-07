@@ -3,6 +3,8 @@ from .models import *
 
 admin.site.register(Customer)
 admin.site.register(Employee)
+admin.site.register(Mechanic)
+admin.site.register(Cashier)
 
 admin.site.register(SparePart)
 admin.site.register(InventoryInvoice)

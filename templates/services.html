@@ -56,7 +56,17 @@
                         <td>{{ record.customer.user.first_name }}</td>
                         <td>{{ record.vehicle.registration_number }}</td>
                         <td>{{ record.mechanic.employee.user.first_name }}</td>
-                        <td>{{ record.get_status_display }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:service_status_update' record.pk %}" class="d-flex align-items-center gap-2">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" style="width:auto;">
+                                    {% for value, label in service_status_choices %}
+                                        <option value="{{ value }}" {% if value == record.status %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                            </form>
+                        </td>
                         <td>{{ record.service_date|date:"d/m/Y" }}</td>
                         <td>
                             <form method="POST" action="{% url 'CORE:service_delete' record.pk %}" style="display:inline;">
@@ -127,7 +137,17 @@
                         <td>{{ invoice.service.id }}</td>
                         <td>{{ invoice.service.customer.user.first_name }}</td>
                         <td>₹{{ invoice.amount }}</td>
-                        <td>{{ invoice.get_status_display }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:service_invoice_status_update' invoice.pk %}" class="d-flex align-items-center gap-2">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" style="width:auto;" {% if invoice.status == 'CANCELLED' %}disabled{% endif %}>
+                                    {% for value, label in service_invoice_status_choices %}
+                                        <option value="{{ value }}" {% if value == invoice.status %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary" {% if invoice.status == 'CANCELLED' %}disabled{% endif %}>Save</button>
+                            </form>
+                        </td>
                         <td>
                             <form method="POST" action="{% url 'CORE:service_invoice_cancel' invoice.pk %}" style="display:inline;">
                                 {% csrf_token %}

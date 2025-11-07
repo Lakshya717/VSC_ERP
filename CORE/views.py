@@ -140,7 +140,7 @@ def vehicle_create(request):
         form = VehicleForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'customers/vehicle_form_done.html')
+            return render(request, 'customer/wizards/vehicle_form_done.html')
     else:
         form = VehicleForm()
     
@@ -401,5 +401,52 @@ def services(request):
         'service_invoices': service_invoice_filter.qs,
         'service_invoice_filter': service_invoice_filter,
         'is_filtered_service_invoices': bool(service_invoice_filter.form.changed_data),
+        'service_status_choices': Service._meta.get_field('status').choices,
+        'service_invoice_status_choices': ServiceInvoice._meta.get_field('status').choices,
     }
     return render(request,'services.html', context)
+
+
+@login_required
+@require_POST
+def service_status_update(request, pk):
+    svc = get_object_or_404(Service, pk=pk)
+    new_status = request.POST.get('status')
+    valid_choices = {value for value, _ in Service._meta.get_field('status').choices}
+
+    if new_status not in valid_choices:
+        messages.error(request, "Invalid status selection.")
+        return redirect('CORE:services')
+
+    # If an invoice exists, lock status to BILLED or CANCELLED only as per business rule
+    if hasattr(svc, 'invoice') and svc.invoice is not None:
+        if new_status != 'BILLED' and new_status != 'CANCELLED':
+            messages.error(request, "Cannot change status of a billed service to a non-billed state.")
+            return redirect('CORE:services')
+
+    svc.status = new_status
+    svc.save(update_fields=['status'])
+    messages.success(request, f"Service #{svc.id} status updated to '{dict(Service._meta.get_field('status').choices).get(new_status, new_status)}'.")
+    return redirect('CORE:services')
+
+
+@login_required
+@require_POST
+def service_invoice_status_update(request, pk):
+    inv = get_object_or_404(ServiceInvoice, pk=pk)
+    new_status = request.POST.get('status')
+    valid_choices = {value for value, _ in ServiceInvoice._meta.get_field('status').choices}
+
+    if new_status not in valid_choices:
+        messages.error(request, "Invalid invoice status selection.")
+        return redirect('CORE:services')
+
+    # Optional rule: prevent changing a CANCELLED invoice back to active states
+    if inv.status == 'CANCELLED' and new_status != 'CANCELLED':
+        messages.error(request, "Cannot change a cancelled invoice.")
+        return redirect('CORE:services')
+
+    inv.status = new_status
+    inv.save(update_fields=['status'])
+    messages.success(request, f"Service Invoice #{inv.id} status updated to '{dict(ServiceInvoice._meta.get_field('status').choices).get(new_status, new_status)}'.")
+    return redirect('CORE:services')

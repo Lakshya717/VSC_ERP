@@ -106,6 +106,9 @@ class Employee(models.Model):
         null=True,
         blank=True
     )
+
+    def __str__(self):
+        return f"{self.role} | {self.user.get_full_name()}"
     
 class Mechanic(models.Model):
     employee = models.OneToOneField(
@@ -114,7 +117,7 @@ class Mechanic(models.Model):
         primary_key=True,
         limit_choices_to={'role__name': 'Mechanic'}
     )
-    
+
     expertise_area = models.ForeignKey(
         MASTER_expertise_area, 
         on_delete=models.PROTECT,
@@ -123,7 +126,12 @@ class Mechanic(models.Model):
     
     years_of_experience = models.PositiveSmallIntegerField(default=0)
     certifications = models.TextField(blank=True, null=True)
- 
+
+
+    def __str__(self):
+        return f"{self.expertise_area} | {self.employee}"
+    
+
 class Accountant(models.Model):
     employee = models.OneToOneField(
         Employee, 

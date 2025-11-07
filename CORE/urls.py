@@ -29,6 +29,8 @@ urlpatterns = [
     path('inventory_invoice/delete/<int:pk>/', views.inventory_invoice_delete, name='inventory_invoice_delete'),
     path('service/delete/<int:pk>/', views.service_delete, name='service_delete'),
     path('service_invoice/cancel/<int:pk>/', views.service_invoice_cancel, name='service_invoice_cancel'),
+    path('service/status/<int:pk>/', views.service_status_update, name='service_status_update'),
+    path('service_invoice/status/<int:pk>/', views.service_invoice_status_update, name='service_invoice_status_update'),
     
     path("profile/",views.profile,name="profile"),       
     path("services/",views.services,name="services"),       
