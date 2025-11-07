@@ -223,23 +223,65 @@ def employee(request):
         'employees': all_employees,
     }
     return render(request,'employee.html', context)
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .forms import UserProfileForm, EmployeeProfileForm
+from .models import Employee
 
 @login_required
 def profile(request):
     user = request.user
+    
+    # --- THIS IS THE CRITICAL PART ---
+    # We MUST check if the employee object exists.
+    try:
+        employee = user.Employee
+    except Employee.DoesNotExist:
+        employee = None
+    # --- END CRITICAL PART ---
 
-    if request.method == 'POST' and request.POST.get('form_type') == 'user_edit_form':
-        form = UserProfileForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully.")
-            return redirect('CORE:profile')
-        else:
-            messages.error(request, "Please correct the errors.")
+    if request.method == 'POST':
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'user_edit_form':
+            user_form = UserProfileForm(request.POST, instance=user)
+            employee_form = EmployeeProfileForm(instance=employee) if employee else None
+            
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, "Profile updated successfully.")
+                return redirect('CORE:profile')
+            else:
+                messages.error(request, "Please correct the profile errors.")
+
+        elif form_type == 'employee_edit_form' and employee:
+            employee_form = EmployeeProfileForm(request.POST, instance=employee)
+            user_form = UserProfileForm(instance=user) 
+            
+            if employee_form.is_valid():
+                employee_form.save()
+                messages.success(request, "Employee details updated successfully.")
+                return redirect('CORE:profile')
+            else:
+                messages.error(request, "Please correct the employee details errors.")
+        
+        elif form_type == 'employee_edit_form' and not employee:
+            messages.error(request, "Cannot update: Employee profile not found.")
+            user_form = UserProfileForm(instance=user)
+            employee_form = None
+            
     else:
-        form = UserProfileForm(instance=user)
+        user_form = UserProfileForm(instance=user)
+        employee_form = EmployeeProfileForm(instance=employee) if employee else None
 
-    return render(request, 'profile.html', {'form': form})
+    context = {
+        'user_form': user_form,
+        'employee_form': employee_form,
+        'employee': employee
+    }
+    return render(request, 'profile.html', context)
+
 
 @login_required()
 def services(request):

@@ -119,3 +119,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
+
+class EmployeeProfileForm(forms.ModelForm):
+    class Meta:
+        model = Employee
+        fields = ['Address', 'mobile_number', 'shift']

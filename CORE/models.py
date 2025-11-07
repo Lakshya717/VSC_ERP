@@ -73,7 +73,7 @@ class Vehicle(models.Model):
 # Employee Models
 # ------------------------------------------------------------------
 class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='Employee')
     DOB = models.DateField()
     Address = models.TextField()
     mobile_number = PhoneNumberField(region="IN")
