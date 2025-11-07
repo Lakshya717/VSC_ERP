@@ -20,7 +20,10 @@ urlpatterns = [
     path("",views.index,name="index"),
     path("inventory/",views.inventory,name="inventory"),
     path("customers/",views.customers,name="customers"),       
-    path("employee/",views.employee,name="employee"),       
+
+    path("employee/",views.employee,name="employee"), 
+    path('employee/delete/<int:pk>/', views.employee_delete, name='employee_delete'),      
+    
     path("profile/",views.profile,name="profile"),       
     path("services/",views.services,name="services"),       
 ]

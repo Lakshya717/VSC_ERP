@@ -21,11 +21,9 @@ class CustomerForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['user',]
 
-# --- ADD THIS NEW FORM ---
 class VehicleForm(forms.ModelForm):
     class Meta:
         model = Vehicle
-        # We get all fields from the model
         fields = '__all__'
 
 # Employee forms
@@ -35,6 +33,10 @@ class EmployeeForm(forms.ModelForm):
         model = Employee
         fields = '__all__'
         exclude = ['user',]
+        widgets = {
+            'DOB': forms.DateInput(attrs={'type': 'date'}),
+        }
+        
 
 class MechanicForm(forms.ModelForm):
     class Meta:

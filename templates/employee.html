@@ -10,12 +10,31 @@
 <div class="card shadow">
     <div class="card-header d-flex justify-content-between align-items-center py-3">
         <p class="text-primary m-0 fw-bold">Employee Info</p>
-        <button class="btn btn-primary" type="button" 
-            data-bs-target="#formModal" 
-            data-bs-toggle="modal" 
-            data-iframe-src="{% url 'CORE:EmployeeCreationWizard' %}">
-            + New Employee
-        </button>
+
+        <div>
+            {% if is_filtered %}
+                <button class="btn btn-success me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#filterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter (Active)
+                </button>
+            {% else %}
+                <button class="btn btn-outline-primary me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#filterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter
+                </button>
+            {% endif %}
+            
+            <button class="btn btn-primary" type="button" 
+                    data-bs-target="#formModal" 
+                    data-bs-toggle="modal" 
+                    data-iframe-src="{% url 'CORE:EmployeeCreationWizard' %}">
+                + New Employee
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive mt-2 table" id="dataTable" role="grid" aria-describedby="dataTable_info">
@@ -25,7 +44,9 @@
                         <th>Name</th>
                         <th>Position</th>
                         <th>Mobile Number</th>
-                        <th>Date of Birth</th> <th>Pay Grade</th>
+                        <th>Date of Birth</th>
+                        <th>Pay Grade</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,10 +58,16 @@
                         </td>
                         <td>{{ employee.role }}</td>
                         <td>{{ employee.mobile_number }}</td>
-                        
                         <td>{{ employee.DOB|date:"d/m/Y" }}</td>
-                        
                         <td>{{ employee.pay_grade }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:employee_delete' employee.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type*="submit" class="btn btn-danger btn-sm" 
+                                        onclick="return confirm('Are you sure you want to delete {{ employee.user.get_full_name|escapejs }}?');">
+                                    <i class="fas fa-trash"></i> </button>
+                            </form>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -50,6 +77,30 @@
                 </tbody>
             </table>
         </div>
-        </div>
+    </div>
 </div>
+
+{% load crispy_forms_tags %}
+
+<form method="get">
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Filter Employees</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    {{ employee_filter.form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'CORE:employee' %}" class="btn btn-secondary">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 {% endblock %}

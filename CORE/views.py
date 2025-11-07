@@ -1,16 +1,17 @@
 from formtools.wizard.views import SessionWizardView
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
 from django.forms import Form
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView, logout_then_login
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.forms import UserChangeForm
 
 from .forms import *
-
+from .filters import *
 from .models import *
 from Masters.models import *
 
@@ -66,7 +67,7 @@ class EmployeeCreationWizard(SessionWizardView):
                 if role.name == 'Mechanic':
                     self.form_list[step] = MechanicForm
                 elif role.name == 'Accountant':
-                    self.form_list[step] = AccountantForm
+                    self.form_list[step] = AccountantForm   
                 elif role.name == 'Cashier':
                     self.form_list[step] = CashierForm
                 elif role.name == 'Advisor':
@@ -74,6 +75,7 @@ class EmployeeCreationWizard(SessionWizardView):
                 else:
                     self.form_list[step] = Form
         return super().get_form(step, data, files)
+    
     def done(self, form_list, **kwargs):
         user_form = form_list[0]
         employee_form = form_list[1]
@@ -195,7 +197,6 @@ def index(request):
 
 @login_required()
 def inventory(request):
-    # ... (rest of view) ...
     all_spare_parts = SparePart.objects.all()
     all_invoices = InventoryInvoice.objects.all()
     context = {
@@ -217,30 +218,36 @@ def customers(request):
 
 @login_required()
 def employee(request):
-    # ... (rest of view) ...
-    all_employees = Employee.objects.all()
+
+    employee_list = Employee.objects.all()
+    employee_filter = EmployeeFilter(request.GET, queryset=employee_list)
+    is_filtered = bool(employee_filter.form.changed_data)
+
     context = {
-        'employees': all_employees,
+        'employees': employee_filter.qs,
+        'employee_filter': employee_filter,
+        'is_filtered': is_filtered,
     }
-    return render(request,'employee.html', context)
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .forms import UserProfileForm, EmployeeProfileForm
-from .models import Employee
+    return render(request, 'employee.html', context)
+
+@login_required
+@require_POST
+def employee_delete(request, pk):
+    employee = get_object_or_404(Employee, pk=pk)    
+    user_full_name = employee.user.get_full_name() or employee.user.username
+    employee.delete()
+    messages.success(request, f"Employee '{user_full_name}' has been deleted.")
+    return redirect('CORE:employee')
 
 @login_required
 def profile(request):
     user = request.user
     
-    # --- THIS IS THE CRITICAL PART ---
-    # We MUST check if the employee object exists.
     try:
         employee = user.Employee
     except Employee.DoesNotExist:
         employee = None
-    # --- END CRITICAL PART ---
-
+    
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
 
