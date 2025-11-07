@@ -23,6 +23,12 @@ urlpatterns = [
 
     path("employee/",views.employee,name="employee"), 
     path('employee/delete/<int:pk>/', views.employee_delete, name='employee_delete'),      
+    path('customer/delete/<int:pk>/', views.customer_delete, name='customer_delete'),
+    path('vehicle/delete/<int:pk>/', views.vehicle_delete, name='vehicle_delete'),
+    path('spare_part/delete/<int:pk>/', views.spare_part_delete, name='spare_part_delete'),
+    path('inventory_invoice/delete/<int:pk>/', views.inventory_invoice_delete, name='inventory_invoice_delete'),
+    path('service/delete/<int:pk>/', views.service_delete, name='service_delete'),
+    path('service_invoice/cancel/<int:pk>/', views.service_invoice_cancel, name='service_invoice_cancel'),
     
     path("profile/",views.profile,name="profile"),       
     path("services/",views.services,name="services"),       

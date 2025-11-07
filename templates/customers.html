@@ -11,12 +11,29 @@
 <div class="card shadow">
     <div class="card-header d-flex justify-content-between align-items-center py-3">
         <p class="text-primary m-0 fw-bold">Customer Info</p>
-        <button class="btn btn-primary" type="button" 
-            data-bs-target="#formModal" 
-            data-bs-toggle="modal" 
-            data-iframe-src="{% url 'CORE:CustomerCreationWizard' %}">
-            + New Customer
-        </button>
+        <div>
+            {% if is_filtered_customers %}
+                <button class="btn btn-success me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#customerFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter (Active)
+                </button>
+            {% else %}
+                <button class="btn btn-outline-primary me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#customerFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter
+                </button>
+            {% endif %}
+            <button class="btn btn-primary" type="button" 
+                data-bs-target="#formModal" 
+                data-bs-toggle="modal" 
+                data-iframe-src="{% url 'CORE:CustomerCreationWizard' %}">
+                + New Customer
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive mt-2 table" id="dataTable" role="grid" aria-describedby="dataTable_info">
@@ -27,6 +44,7 @@
                         <th>Mobile Number</th>
                         <th>Email</th>
                         <th>Address</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,10 +57,18 @@
                         <td>{{ customer.mobile_number }}</td>
                         <td>{{ customer.user.email }}</td>
                         <td>{{ customer.address }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:customer_delete' customer.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete {{ customer.user.get_full_name|default:customer.user.username|escapejs }}?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4">No customers found.</td>
+                        <td colspan="5">No customers found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -52,16 +78,54 @@
         </div>
 </div>
 
+{% load crispy_forms_tags %}
+
+<form method="get">
+    <div class="modal fade" id="customerFilterModal" tabindex="-1" aria-labelledby="customerFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customerFilterModalLabel">Filter Customers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ customer_filter.form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'CORE:customers' %}" class="btn btn-secondary">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
 <div class="card shadow mt-3">
     <div class="card-header d-flex justify-content-between align-items-center py-3">
         <p class="text-primary m-0 fw-bold">Vehicle Info</p>
-        
-        <button class="btn btn-primary" type="button" 
-            data-bs-target="#formModal" 
-            data-bs-toggle="modal" 
-            data-iframe-src="{% url 'CORE:vehicle_create' %}"> 
-            + New Vehicle
-        </button>
+        <div>
+            {% if is_filtered_vehicles %}
+                <button class="btn btn-success me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#vehicleFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter (Active)
+                </button>
+            {% else %}
+                <button class="btn btn-outline-primary me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#vehicleFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter
+                </button>
+            {% endif %}
+            <button class="btn btn-primary" type="button" 
+                data-bs-target="#formModal" 
+                data-bs-toggle="modal" 
+                data-iframe-src="{% url 'CORE:vehicle_create' %}"> 
+                + New Vehicle
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive mt-2 table" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
@@ -71,22 +135,31 @@
                         <th>Owner</th>
                         <th>Registration No.</th>
                         <th>Model</th>
-                        <th>Make</th>
-                        <th>Last Service</th>
+                        <th>Brand</th>
+                        <th>Year</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for vehicle in vehicles %}
                     <tr>
-                        <td>{{ vehicle.owner.user.first_name }}</td>
+                        <td>{{ vehicle.customer.user.first_name }}</td>
                         <td>{{ vehicle.registration_number }}</td>
-                        <td>{{ vehicle.vehicle_model }}</td>
-                        <td>{{ vehicle.make }}</td>
-                        <td>{{ vehicle.last_service_date|date:"d/m/Y" }}</td>
+                        <td>{{ vehicle.model.name }}</td>
+                        <td>{{ vehicle.model.brand.name }}</td>
+                        <td>{{ vehicle.year }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:vehicle_delete' vehicle.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete {{ vehicle.registration_number|escapejs }}?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5">No vehicles found.</td>
+                        <td colspan="6">No vehicles found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -94,4 +167,26 @@
         </div>
         </div>
 </div>
+{% load crispy_forms_tags %}
+
+<!-- Vehicle Filter Modal -->
+<form method="get">
+    <div class="modal fade" id="vehicleFilterModal" tabindex="-1" aria-labelledby="vehicleFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vehicleFilterModalLabel">Filter Vehicles</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ vehicle_filter.form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'CORE:customers' %}" class="btn btn-secondary">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 {% endblock %}

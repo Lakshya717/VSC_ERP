@@ -11,12 +11,29 @@
 <div class="card shadow">
     <div class="card-header d-flex justify-content-between align-items-center py-3">
         <p class="text-primary m-0 fw-bold">Spare Parts</p>
-        <button class="btn btn-primary" type="button" 
-            data-bs-toggle="modal" 
-            data-bs-target="#formModal" 
-            data-iframe-src="{% url 'CORE:spare_part_create' %}">
-            + New Part
-        </button>
+        <div>
+            {% if is_filtered_spare_parts %}
+                <button class="btn btn-success me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#partsFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter (Active)
+                </button>
+            {% else %}
+                <button class="btn btn-outline-primary me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#partsFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter
+                </button>
+            {% endif %}
+            <button class="btn btn-primary" type="button" 
+                data-bs-toggle="modal" 
+                data-bs-target="#formModal" 
+                data-iframe-src="{% url 'CORE:spare_part_create' %}">
+                + New Part
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive mt-2 table" id="dataTable" role="grid" aria-describedby="dataTable_info">
@@ -28,6 +45,7 @@
                         <th>Vehicle Model</th>
                         <th>Type</th> <th>Qty</th>
                         <th>Price</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,10 +59,18 @@
                         
                         <td>{{ part.quantity_in_stock }}</td>
                         <td>₹{{ part.price }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:spare_part_delete' part.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete spare part {{ part.name|escapejs }}?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6">No spare parts found.</td>
+                        <td colspan="7">No spare parts found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -56,12 +82,29 @@
 <div class="card shadow mt-3">
     <div class="card-header d-flex justify-content-between align-items-center py-3">
         <p class="text-primary m-0 fw-bold">Invoices</p>
-        <button class="btn btn-primary" type="button" 
-            data-bs-toggle="modal" 
-            data-bs-target="#formModal" 
-            data-iframe-src="{% url 'CORE:inventory_invoice_create' %}">
-            + New Invoice
-        </button>
+        <div>
+            {% if is_filtered_inventory_invoices %}
+                <button class="btn btn-success me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#invInvoicesFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter (Active)
+                </button>
+            {% else %}
+                <button class="btn btn-outline-primary me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#invInvoicesFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter
+                </button>
+            {% endif %}
+            <button class="btn btn-primary" type="button" 
+                data-bs-toggle="modal" 
+                data-bs-target="#formModal" 
+                data-iframe-src="{% url 'CORE:inventory_invoice_create' %}">
+                + New Invoice
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive mt-2 table" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
@@ -73,7 +116,9 @@
                         <th>Supplier</th>
                         <th>Qty</th>
                         <th>Date</th>
-                        <th>Cost</th> </tr>
+                        <th>Cost</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
                     {% for invoice in inventory_invoices %}
@@ -82,11 +127,20 @@
                         <td>{{ invoice.spare_part.name }}</td>
                         <td>{{ invoice.supplier }}</td>
                         <td>{{ invoice.quantity_received }}</td>
-                        <td>{{ invoice.date|date:"d/m/Y" }}</td> <td>₹{{ invoice.cost }}</td>
+                        <td>{{ invoice.date|date:"d/m/Y" }}</td>
+                        <td>₹{{ invoice.cost }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:inventory_invoice_delete' invoice.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete inventory invoice #{{ invoice.id }}?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6">No invoices found.</td>
+                        <td colspan="7">No invoices found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -94,4 +148,47 @@
         </div>
         </div>
 </div>
+{% load crispy_forms_tags %}
+
+<!-- Spare Parts Filter Modal -->
+<form method="get">
+    <div class="modal fade" id="partsFilterModal" tabindex="-1" aria-labelledby="partsFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="partsFilterModalLabel">Filter Spare Parts</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ spare_part_filter.form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'CORE:inventory' %}" class="btn btn-secondary">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Inventory Invoices Filter Modal -->
+<form method="get">
+    <div class="modal fade" id="invInvoicesFilterModal" tabindex="-1" aria-labelledby="invInvoicesFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invInvoicesFilterModalLabel">Filter Inventory Invoices</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ inventory_invoice_filter.form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'CORE:inventory' %}" class="btn btn-secondary">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 {% endblock %}

@@ -11,12 +11,29 @@
 <div class="card shadow">
     <div class="card-header d-flex justify-content-between align-items-center py-3">
         <p class="text-primary m-0 fw-bold">Records</p>
-        <button class="btn btn-primary" type="button" 
-            data-bs-target="#formModal" 
-            data-bs-toggle="modal" 
-            data-iframe-src="{% url 'CORE:service_record_create' %}">
-            + New Record
-        </button>
+        <div>
+            {% if is_filtered_service_records %}
+                <button class="btn btn-success me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#serviceFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter (Active)
+                </button>
+            {% else %}
+                <button class="btn btn-outline-primary me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#serviceFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter
+                </button>
+            {% endif %}
+            <button class="btn btn-primary" type="button" 
+                data-bs-target="#formModal" 
+                data-bs-toggle="modal" 
+                data-iframe-src="{% url 'CORE:service_record_create' %}">
+                + New Record
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive mt-2 table" id="dataTable" role="grid" aria-describedby="dataTable_info">
@@ -29,6 +46,7 @@
                         <th>Mechanic</th>
                         <th>Status</th>
                         <th>Date</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,10 +58,18 @@
                         <td>{{ record.mechanic.employee.user.first_name }}</td>
                         <td>{{ record.get_status_display }}</td>
                         <td>{{ record.service_date|date:"d/m/Y" }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:service_delete' record.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete service record #{{ record.id }}?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6">No service records found.</td>
+                        <td colspan="7">No service records found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -55,12 +81,29 @@
 <div class="card shadow mt-3">
     <div class="card-header d-flex justify-content-between align-items-center py-3">
         <p class="text-primary m-0 fw-bold">Invoices</p>
-        <button class="btn btn-primary" type="button" 
-            data-bs-target="#formModal" 
-            data-bs-toggle="modal" 
-            data-iframe-src="{% url 'CORE:service_invoice_create' %}">
-            + New Invoice
-        </button>
+        <div>
+            {% if is_filtered_service_invoices %}
+                <button class="btn btn-success me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#serviceInvoiceFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter (Active)
+                </button>
+            {% else %}
+                <button class="btn btn-outline-primary me-2" type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#serviceInvoiceFilterModal">
+                    <i class="fas fa-filter me-1"></i>
+                    Filter
+                </button>
+            {% endif %}
+            <button class="btn btn-primary" type="button" 
+                data-bs-target="#formModal" 
+                data-bs-toggle="modal" 
+                data-iframe-src="{% url 'CORE:service_invoice_create' %}">
+                + New Invoice
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive mt-2 table" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
@@ -73,6 +116,7 @@
                         <th>Customer</th>
                         <th>Amount</th>
                         <th>Payment Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,10 +128,18 @@
                         <td>{{ invoice.service.customer.user.first_name }}</td>
                         <td>₹{{ invoice.amount }}</td>
                         <td>{{ invoice.get_status_display }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'CORE:service_invoice_cancel' invoice.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Cancel service invoice #{{ invoice.id }}?');" {% if invoice.status == 'CANCELLED' %}disabled{% endif %}>
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6">No service invoices found.</td>
+                        <td colspan="7">No service invoices found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -95,4 +147,47 @@
         </div>
         </div>
 </div>
+{% load crispy_forms_tags %}
+
+<!-- Service Records Filter Modal -->
+<form method="get">
+    <div class="modal fade" id="serviceFilterModal" tabindex="-1" aria-labelledby="serviceFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="serviceFilterModalLabel">Filter Service Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ service_filter.form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'CORE:services' %}" class="btn btn-secondary">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Service Invoices Filter Modal -->
+<form method="get">
+    <div class="modal fade" id="serviceInvoiceFilterModal" tabindex="-1" aria-labelledby="serviceInvoiceFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="serviceInvoiceFilterModalLabel">Filter Service Invoices</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ service_invoice_filter.form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'CORE:services' %}" class="btn btn-secondary">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 {% endblock %}

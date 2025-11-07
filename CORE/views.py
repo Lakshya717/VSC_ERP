@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.forms import UserChangeForm
+from django.db.models import ProtectedError
 
 from .forms import *
 from .filters import *
@@ -197,22 +198,37 @@ def index(request):
 
 @login_required()
 def inventory(request):
-    all_spare_parts = SparePart.objects.all()
-    all_invoices = InventoryInvoice.objects.all()
+    parts_qs = SparePart.objects.select_related('vehicle_model', 'type').all()
+    invoices_qs = InventoryInvoice.objects.select_related('spare_part').all()
+
+    spare_part_filter = SparePartFilter(request.GET, queryset=parts_qs, prefix='parts')
+    inventory_invoice_filter = InventoryInvoiceFilter(request.GET, queryset=invoices_qs, prefix='inv')
+
     context = {
-        'spare_parts': all_spare_parts,
-        'inventory_invoices': all_invoices,
+        'spare_parts': spare_part_filter.qs,
+        'spare_part_filter': spare_part_filter,
+        'is_filtered_spare_parts': bool(spare_part_filter.form.changed_data),
+
+        'inventory_invoices': inventory_invoice_filter.qs,
+        'inventory_invoice_filter': inventory_invoice_filter,
+        'is_filtered_inventory_invoices': bool(inventory_invoice_filter.form.changed_data),
     }
     return render(request,'inventory.html', context)
 
 @login_required()
 def customers(request):
     # ... (rest of view) ...
-    all_customers = Customer.objects.all()
-    all_vehicles = Vehicle.objects.all() 
+    all_customers = Customer.objects.select_related('user').all()
+    all_vehicles = Vehicle.objects.select_related('customer__user', 'model__brand').all() 
+    customer_filter = CustomerFilter(request.GET, queryset=all_customers, prefix='cust')
+    vehicle_filter = VehicleFilter(request.GET, queryset=all_vehicles, prefix='veh')
     context = {
-        'customers': all_customers,
-        'vehicles': all_vehicles,
+        'customers': customer_filter.qs,
+        'customer_filter': customer_filter,
+        'is_filtered_customers': bool(customer_filter.form.changed_data),
+        'vehicles': vehicle_filter.qs,
+        'vehicle_filter': vehicle_filter,
+        'is_filtered_vehicles': bool(vehicle_filter.form.changed_data),
     }
     return render(request,'customers.html', context)
 
@@ -238,6 +254,84 @@ def employee_delete(request, pk):
     employee.delete()
     messages.success(request, f"Employee '{user_full_name}' has been deleted.")
     return redirect('CORE:employee')
+
+
+@login_required
+@require_POST
+def customer_delete(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    try:
+        display_name = customer.user.get_full_name() or customer.user.username
+        customer.delete()
+        messages.success(request, f"Customer '{display_name}' has been deleted.")
+    except ProtectedError:
+        messages.error(request, "Cannot delete customer because related vehicles or services exist.")
+    return redirect('CORE:customers')
+
+
+@login_required
+@require_POST
+def vehicle_delete(request, pk):
+    vehicle = get_object_or_404(Vehicle, pk=pk)
+    try:
+        reg = vehicle.registration_number
+        vehicle.delete()
+        messages.success(request, f"Vehicle '{reg}' has been deleted.")
+    except ProtectedError:
+        messages.error(request, "Cannot delete vehicle because related service records exist.")
+    return redirect('CORE:customers')
+
+
+@login_required
+@require_POST
+def spare_part_delete(request, pk):
+    part = get_object_or_404(SparePart, pk=pk)
+    try:
+        name = part.name
+        part.delete()
+        messages.success(request, f"Spare part '{name}' has been deleted.")
+    except ProtectedError:
+        messages.error(request, "Cannot delete spare part because invoices or service usages exist.")
+    return redirect('CORE:inventory')
+
+
+@login_required
+@require_POST
+def inventory_invoice_delete(request, pk):
+    invoice = get_object_or_404(InventoryInvoice, pk=pk)
+    try:
+        invoice_id = invoice.id
+        invoice.delete()
+        messages.success(request, f"Inventory invoice '{invoice_id}' has been deleted and stock adjusted.")
+    except Exception:
+        messages.error(request, "Failed to delete inventory invoice.")
+    return redirect('CORE:inventory')
+
+
+@login_required
+@require_POST
+def service_delete(request, pk):
+    svc = get_object_or_404(Service, pk=pk)
+    try:
+        sid = svc.id
+        svc.delete()
+        messages.success(request, f"Service record '{sid}' has been deleted.")
+    except ProtectedError:
+        messages.error(request, "Cannot delete service record because an invoice exists.")
+    return redirect('CORE:services')
+
+
+@login_required
+@require_POST
+def service_invoice_cancel(request, pk):
+    inv = get_object_or_404(ServiceInvoice, pk=pk)
+    if inv.status == 'CANCELLED':
+        messages.info(request, f"Service invoice '{inv.id}' is already cancelled.")
+    else:
+        inv.status = 'CANCELLED'
+        inv.save()
+        messages.success(request, f"Service invoice '{inv.id}' has been cancelled.")
+    return redirect('CORE:services')
 
 @login_required
 def profile(request):
@@ -293,10 +387,19 @@ def profile(request):
 @login_required()
 def services(request):
     # ... (rest of view) ...
-    all_records = Service.objects.all() 
-    all_invoices = ServiceInvoice.objects.all()
+    records_qs = Service.objects.select_related('customer__user', 'vehicle', 'mechanic__employee__user').all() 
+    invoices_qs = ServiceInvoice.objects.select_related('service__customer__user').all()
+
+    service_filter = ServiceFilter(request.GET, queryset=records_qs, prefix='svc')
+    service_invoice_filter = ServiceInvoiceFilter(request.GET, queryset=invoices_qs, prefix='svcinv')
+
     context = {
-        'service_records': all_records,
-        'service_invoices': all_invoices,
+        'service_records': service_filter.qs,
+        'service_filter': service_filter,
+        'is_filtered_service_records': bool(service_filter.form.changed_data),
+
+        'service_invoices': service_invoice_filter.qs,
+        'service_invoice_filter': service_invoice_filter,
+        'is_filtered_service_invoices': bool(service_invoice_filter.form.changed_data),
     }
     return render(request,'services.html', context)
