@@ -114,3 +114,8 @@ class ServiceInvoiceForm(forms.ModelForm):
             'payment_method',
             'status'
         ]
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']

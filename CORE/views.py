@@ -6,6 +6,8 @@ from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView, logout_then_login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.forms import UserChangeForm
 
 from .forms import *
 
@@ -222,10 +224,22 @@ def employee(request):
     }
     return render(request,'employee.html', context)
 
-@login_required()
+@login_required
 def profile(request):
-    # ... (rest of view) ...
-    return render(request,'profile.html')
+    user = request.user
+
+    if request.method == 'POST' and request.POST.get('form_type') == 'user_edit_form':
+        form = UserProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('CORE:profile')
+        else:
+            messages.error(request, "Please correct the errors.")
+    else:
+        form = UserProfileForm(instance=user)
+
+    return render(request, 'profile.html', {'form': form})
 
 @login_required()
 def services(request):
