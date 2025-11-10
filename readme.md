@@ -28,6 +28,11 @@ Each interaction between a customer and the Service Centre will be co-ordinated 
 ### Billing 
 Generating invoices for services, releasing of funds for inventory, salary, office's running costs, etc. shall be handled by this sub-application.
 
+## ER Diagram
+
+![ER Diagram](./docs/ER_DIAGRAM.png)
+
+## Schema Diagram
 
 ## Expected Entities
 
